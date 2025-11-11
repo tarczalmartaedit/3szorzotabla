@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <title>Szorzás gyakorló – nehézség + számláló</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #111827;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 520px;
+      background: #ffffff;
+      padding: 24px 22px 20px;
+      border-radius: 18px;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.12);
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 1.6rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .hint {
+      margin: 0 0 14px;
+      font-size: 0.85rem;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    .section-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #374151;
+    }
+
+    .difficulty-options {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+      font-size: 0.82rem;
+    }
+
+    .difficulty-options label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .difficulty-options input {
+      accent-color: #2563eb;
+    }
+
+    .difficulty-options label:hover {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+
+    .taskcount-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 0.82rem;
+      flex-wrap: wrap;
+    }
+
+    .taskcount-row select {
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      font-size: 0.82rem;
+      background: #f9fafb;
+    }
+
+    .taskcount-row select:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+    }
+
+    .status {
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      color: #4b5563;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .status strong {
+      font-weight: 700;
+    }
+
+    .question-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .question-box {
+      margin: 4px 0 14px;
+      padding: 14px 14px;
+      border-radius: 14px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #1d4ed8;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+
+    input[type="number"] {
+      flex: 1;
+      padding: 9px 10px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.18);
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: all 0.12s ease;
+    }
+
+    button.primary {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(37,99,235,0.4);
+    }
+
+    button.secondary {
+      background: #f3f4ff;
+      color: #111827;
+      border: 1px solid #d1d5db;
+      box-shadow: none;
+      font-size: 0.8rem;
+      padding: 7px 10px;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 7px 16px rgba(0,0,0,0.18);
+    }
+
+    button.secondary:hover {
+      box-shadow: 0 4px 10px rgba(0,0,0,0.10);
+      background: #e5e7ff;
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.16);
+    }
+
+    .feedback {
+      min-height: 32px;
+      margin-top: 6px;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .good {
+      color: #16a34a;
+      font-weight: 600;
+    }
+
+    .bad {
+      color: #dc2626;
+      font-weight: 600;
+    }
+
+    .small {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .footer {
+      margin-top: 10px;
+      font-size: 0.7rem;
+      color: #9ca3af;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <h1>✖️ Szorzás gyakorló</h1>
+  <p class="hint">Válassz szintet és feladatszámot. Oldd meg a példákat, a végén megkapod az eredményedet.</p>
+
+  <div class="section-label">Nehézség:</div>
+  <div class="difficulty-options">
+    <label>
+      <input type="radio" name="difficulty" value="easy" checked />
+      Könnyű (1, 2, 4, 5, 10)
+    </label>
+    <label>
+      <input type="radio" name="difficulty" value="medium" />
+      Közepes (3, 6)
+    </label>
+    <label>
+      <input type="radio" name="difficulty" value="hard" />
+      Nehéz (7, 8, 9)
+    </label>
+  </div>
+
+  <div class="taskcount-row">
+    <span class="section-label" style="margin:0;">Feladatok száma a sorozatban:</span>
+    <select id="taskCountSelect">
+      <option value="10">10</option>
+      <option value="20">20</option>
+      <option value="30">30</option>
+      <option value="40">40</option>
+      <option value="50">50</option>
+    </select>
+    <button class="secondary" id="newSeriesBtn" title="Mindent nulláz és új sorozatot indít.">🔁 Új sorozat</button>
+  </div>
+
+  <div class="status" id="status">
+    <span><strong>Feladat:</strong> 1 / 10</span>
+    <span><strong>Helyes:</strong> 0</span>
+  </div>
+
+  <div class="question-label">Aktuális feladat:</div>
+  <div class="question-box" id="questionBox">
+    <span id="a">3</span>
+    <span>×</span>
+    <span id="b">4</span>
+    <span>=</span>
+    <span>?</span>
+  </div>
+
+  <div class="input-row">
+    <input type="number" id="answerInput" placeholder="Írd ide a szorzatot" />
+    <button class="primary" id="checkBtn">✅ Ellenőrzés</button>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+  <div class="footer">Minden helyben fut, internet nélkül is használható.</div>
+</div>
+
+<script>
+  const aSpan = document.getElementById('a');
+  const bSpan = document.getElementById('b');
+  const answerInput = document.getElementById('answerInput');
+  const checkBtn = document.getElementById('checkBtn');
+  const feedback = document.getElementById('feedback');
+  const difficultyRadios = document.querySelectorAll('input[name="difficulty"]');
+  const taskCountSelect = document.getElementById('taskCountSelect');
+  const statusEl = document.getElementById('status');
+  const newSeriesBtn = document.getElementById('newSeriesBtn');
+
+  const sets = {
+    easy:  [1, 2, 4, 5, 10],
+    medium:[3, 6],
+    hard:  [7, 8, 9]
+  };
+
+  let currentA = 0;
+  let currentB = 0;
+  let totalTasks = parseInt(taskCountSelect.value, 10);
+  let solved = 0;        // hány feladatot ellenőriztünk már ebben a sorozatban
+  let correctCount = 0;  // hány volt helyes
+  let finished = false;  // vége van-e a sorozatnak
+
+  function getDifficulty() {
+    let value = 'easy';
+    difficultyRadios.forEach(r => {
+      if (r.checked) value = r.value;
+    });
+    return value;
+  }
+
+  function updateStatus() {
+    if (finished) {
+      statusEl.innerHTML = `<span><strong>Sorozat vége</strong></span><span><strong>Eredmény:</strong> ${correctCount} / ${totalTasks} helyes</span>`;
+    } else {
+      const nextIndex = Math.min(solved + 1, totalTasks);
+      statusEl.innerHTML =
+        `<span><strong>Feladat:</strong> ${nextIndex} / ${totalTasks}</span>` +
+        `<span><strong>Helyes:</strong> ${correctCount}</span>`;
+    }
+  }
+
+  function newQuestion() {
+    const diff = getDifficulty();
+    const baseSet = sets[diff];
+
+    // Ha már vége a sorozatnak, ne generáljunk új feladatot
+    if (finished) return;
+
+    const base = baseSet[Math.floor(Math.random() * baseSet.length)];
+    const other = Math.floor(Math.random() * 10) + 1; // 1-10
+
+    if (Math.random() < 0.5) {
+      currentA = base;
+      currentB = other;
+    } else {
+      currentA = other;
+      currentB = base;
+    }
+
+    aSpan.textContent = currentA;
+    bSpan.textContent = currentB;
+    answerInput.value = "";
+    feedback.textContent = "";
+    feedback.className = "feedback";
+    updateStatus();
+    answerInput.focus();
+  }
+
+  function endSeriesMessage() {
+    feedback.innerHTML =
+      `<span class="small">Sorozat véget ért.</span> ` +
+      `<span class="good">Eredményed: ${correctCount} / ${totalTasks} helyes.</span> ` +
+      `<span class="small">Kattints az „Új sorozat” gombra az újrakezdéshez.</span>`;
+    feedback.className = "feedback fade-in";
+  }
+
+  function checkAnswer() {
+    if (finished) {
+      endSeriesMessage();
+      return;
+    }
+
+    const userValue = answerInput.value.trim();
+    if (userValue === "") {
+      feedback.textContent = "Írd be a választ!";
+      feedback.className = "feedback bad fade-in";
+      return;
+    }
+
+    const correct = currentA * currentB;
+    const userNumber = Number(userValue);
+
+    if (!Number.isFinite(userNumber)) {
+      feedback.textContent = "Kérlek, számot írj be.";
+      feedback.className = "feedback bad fade-in";
+      return;
+    }
+
+    solved++;
+
+    if (userNumber === correct) {
+      correctCount++;
+      feedback.innerHTML = `<span class="good">✅ Helyes!</span> <span class="small">(${currentA} × ${currentB} = ${correct})</span>`;
+    } else {
+      feedback.innerHTML = `<span class="bad">❌ Nem jó.</span> <span class="small">A helyes eredmény: ${currentA} × ${currentB} = ${correct}.</span>`;
+    }
+    feedback.className = "feedback fade-in";
+
+    if (solved >= totalTasks) {
+      finished = true;
+      updateStatus();
+      // hagyjuk látni az utolsó feladat visszajelzését
+      setTimeout(endSeriesMessage, 200);
+    } else {
+      updateStatus();
+      setTimeout(newQuestion, 800);
+    }
+  }
+
+  function resetSeries() {
+    totalTasks = parseInt(taskCountSelect.value, 10);
+    solved = 0;
+    correctCount = 0;
+    finished = false;
+    feedback.textContent = "";
+    feedback.className = "feedback";
+    updateStatus();
+    newQuestion();
+  }
+
+  checkBtn.addEventListener('click', checkAnswer);
+
+  answerInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      checkAnswer();
+    }
+  });
+
+  difficultyRadios.forEach(radio => {
+    radio.addEventListener('change', () => {
+      // nehézség váltás: új sorozatot kezdünk automatikusan az új beállítással
+      resetSeries();
+    });
+  });
+
+  taskCountSelect.addEventListener('change', () => {
+    // feladatszám változtatáskor új sorozat indul az új értékkel
+    resetSeries();
+  });
+
+  newSeriesBtn.addEventListener('click', () => {
+    resetSeries();
+  });
+
+  // Indításkor első sorozat
+  resetSeries();
+</script>
+</body>
+</html>
